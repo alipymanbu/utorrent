@@ -1,134 +1,25 @@
-# utorrent [![npm](https://badgen.net/npm/v/@ctrl/utorrent)](https://www.npmjs.com/package/@ctrl/utorrent)
+# utorrent
 
-> TypeScript api wrapper for [utorrent](https://www.utorrent.com) using [ofetch](https://github.com/unjs/ofetch)
+本仓库是「utorrent」的安卓版本获取入口，附使用资料索引。
 
-### Install
+## 安装文件资源（夸克网盘）
 
-```console
-npm install @ctrl/utorrent
-```
+> **utorrent 安装文件资源（夸克网盘）**：[https://pan.quark.cn/s/5ccd4be5fda9](https://pan.quark.cn/s/5ccd4be5fda9)
 
-### Use
+## 官方项目
 
-```ts
-import { Utorrent } from '@ctrl/utorrent';
+- 上游项目：[scttcper/utorrent](https://github.com/scttcper/utorrent)
 
-const client = new Utorrent({
-  baseUrl: 'http://localhost:44822/',
-  path: '/gui/',
-  password: 'admin',
-});
+## 更多资料
 
-async function main() {
-  const res = await client.getAllData();
-  console.log(res);
-}
-```
+- [下载与安装教程](https://github.com/alipymanbu/Android/blob/master/%E5%AE%98%E7%BD%91%E7%89%88APP%E4%B8%8B%E8%BD%BD/utorrent/%E4%B8%8B%E8%BD%BD%E4%B8%8E%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B.md)
+- [下载保存位置与文件管理](https://github.com/alipymanbu/Android/blob/master/%E5%AE%98%E7%BD%91%E7%89%88APP%E4%B8%8B%E8%BD%BD/utorrent/%E4%B8%8B%E8%BD%BD%E4%BF%9D%E5%AD%98%E4%BD%8D%E7%BD%AE%E4%B8%8E%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86.md)
+- [下载速度设置与提速](https://github.com/alipymanbu/Android/blob/master/%E5%AE%98%E7%BD%91%E7%89%88APP%E4%B8%8B%E8%BD%BD/utorrent/%E4%B8%8B%E8%BD%BD%E9%80%9F%E5%BA%A6%E8%AE%BE%E7%BD%AE%E4%B8%8E%E6%8F%90%E9%80%9F.md)
+- [常见问题与解决方法](https://github.com/alipymanbu/Android/blob/master/%E5%AE%98%E7%BD%91%E7%89%88APP%E4%B8%8B%E8%BD%BD/utorrent/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B8%8E%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95.md)
+- [磁力链接与种子下载方法](https://github.com/alipymanbu/Android/blob/master/%E5%AE%98%E7%BD%91%E7%89%88APP%E4%B8%8B%E8%BD%BD/utorrent/%E7%A3%81%E5%8A%9B%E9%93%BE%E6%8E%A5%E4%B8%8E%E7%A7%8D%E5%AD%90%E4%B8%8B%E8%BD%BD%E6%96%B9%E6%B3%95.md)
+- [远程管理电脑端下载](https://github.com/alipymanbu/Android/blob/master/%E5%AE%98%E7%BD%91%E7%89%88APP%E4%B8%8B%E8%BD%BD/utorrent/%E8%BF%9C%E7%A8%8B%E7%AE%A1%E7%90%86%E7%94%B5%E8%84%91%E7%AB%AF%E4%B8%8B%E8%BD%BD.md)
+- [全部软件目录](https://github.com/alipymanbu/Android/blob/master/%E5%85%A8%E9%83%A8%E8%BD%AF%E4%BB%B6%E7%9B%AE%E5%BD%95.md)
 
-### Persisting auth state (export/restore)
+---
 
-You can persist the authenticated session between runs to avoid logging in every time. Use `exportState()` to serialize, and `Utorrent.createFromState()` to restore.
-
-```ts
-import { Utorrent } from '@ctrl/utorrent';
-
-// First run: create client, it will authenticate on first request
-const client = new Utorrent({
-  baseUrl: 'http://localhost:44822/',
-  path: '/gui/',
-  password: 'admin',
-});
-
-// After doing some work, save state (persist somewhere, e.g., file/db)
-const stateJson = client.exportState();
-// Example: write to disk
-// await fs.promises.writeFile('utorrent-state.json', JSON.stringify(stateJson));
-
-// Next run: restore from saved state
-// const saved = JSON.parse(await fs.promises.readFile('utorrent-state.json', 'utf8'));
-const restored = Utorrent.createFromState(
-  {
-    baseUrl: 'http://localhost:44822/',
-    path: '/gui/',
-    password: 'admin',
-  },
-  stateJson,
-);
-
-// Use the restored client; it will reuse cookie/token until expiry
-const data = await restored.getAllData();
-console.log(data.torrents.length);
-```
-
-### API
-
-DOCS: https://utorrent.ep.workers.dev  
-utorrent webui: https://github.com/bittorrent/webui/blob/master/webui.js  
-another webui link: https://github.com/bittorrent/webui/wiki/Web-UI-API
-
-### Normalized API
-
-These functions are normalized through [@ctrl/shared-torrent](https://github.com/scttcper/shared-torrent), which makes it easier to support multiple torrent clients. See below for alternative supported torrent clients.
-
-##### getAllData
-
-Returns all torrent data and an array of label objects. Data has been normalized and does not match the output of native `listTorrents()`.
-
-```ts
-const data = await client.getAllData();
-console.log(data.torrents);
-```
-
-##### getTorrent
-
-Returns one torrent data from hash id
-
-```ts
-const data = await client.getTorrent('torrent-hash');
-console.log(data);
-```
-
-##### pauseTorrent and resumeTorrent
-
-Pause or resume a torrent
-
-```ts
-const paused = await client.pauseTorrent('torrent-hash');
-console.log(paused);
-const resumed = await client.resumeTorrent('torrent-hash');
-console.log(resumed);
-```
-
-##### removeTorrent
-
-Remove a torrent. Does not remove data on disk by default.
-
-```ts
-// does not remove data on disk
-const result = await client.removeTorrent('torrent_id', false);
-console.log(result);
-
-// remove data on disk
-const res = await client.removeTorrent('torrent_id', true);
-console.log(res);
-```
-
-### See Also
-
-- shared types - [@ctrl/shared-torrent](https://github.com/scttcper/shared-torrent)
-- deluge - [@ctrl/deluge](https://github.com/scttcper/deluge)
-- transmission - [@ctrl/transmission](https://github.com/scttcper/transmission)
-- qbittorrent - [@ctrl/qbittorrent](https://github.com/scttcper/qbittorrent)
-- rtorrent - [@ctrl/rtorrent](https://github.com/scttcper/rtorrent)
-
-### Start a test docker container
-
-```
-docker run                                            \
-    --name utorrent                                   \
-    -v ~/Documents/utorrentt:/data                    \
-    -p 8080:8080                                      \
-    -p 6881:6881                                      \
-    -p 6881:6881/udp                                  \
-    ekho/utorrent:latest
-```
+> 本仓库由上游项目 fork 而来，原始说明见[上游仓库](https://github.com/scttcper/utorrent)。
